@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../components/mytext.dart';
 import '../constants/constants.dart';
 import '../core/_config.dart';
-import '../models/auth_service.dart';
+import '../database/services/auth_service.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -117,13 +117,11 @@ class _SignUpState extends State<SignUp> {
           ),
         ),
       ),
-      Container(
-        margin:
-            EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.03),
-        width: MediaQuery.of(context).size.width / 2,
-        child: MyText.baseText(
-            text: 'WELCOME', size: 40, maxLine: 1, fontWeight: FontWeight.w700),
-      )
+      const SizedBox(
+        height: 10,
+      ),
+       MyText.baseText(
+          text: 'Welcome to  Waiter', fontWeight: FontWeight.w400, size: 18)
     ]);
   }
 
@@ -140,7 +138,7 @@ class _SignUpState extends State<SignUp> {
         children: [
           _entryField(
               title: 'Name',
-              isObscure: true,
+              isObscure: _noObscure,
               controller: _controllerName,
               color:  Color(0xffF2CDD4)),
           const SizedBox(
@@ -156,21 +154,29 @@ class _SignUpState extends State<SignUp> {
           ),
           _entryField(
               title: 'Password',
-              isObscure: true,
+              isObscure: _isObscurePassword,
               iconVisibility_off: Icons.visibility_off,
               iconVisibility: Icons.visibility,
               controller: _controllerPassword,
-              color: checkPass ?  Color(0xffF2CDD4): AppColor.primaryColor),
+              color: checkPass ?  Color(0xffF2CDD4): AppColor.primaryColor,
+              onPressed: () {
+                _isObscurePassword = !_isObscurePassword;
+                      (context as Element).markNeedsBuild();
+              },),
           const SizedBox(
             height: 5,
           ),
           _entryField(
               title: 'Confirm Password',
-              isObscure: false,
+              isObscure: _isObscureConfirmPassword,
               iconVisibility_off: Icons.visibility_off,
               iconVisibility: Icons.visibility,
               controller: _controllerConfirmPassword,
-              color: checkPass ?  Color(0xffF2CDD4): AppColor.primaryColor),
+              color: checkPass ?  Color(0xffF2CDD4): AppColor.primaryColor,
+              onPressed: () {
+                _isObscureConfirmPassword = !_isObscureConfirmPassword;
+                      (context as Element).markNeedsBuild();
+              },),
           _submitButton()
         ],
       ),
@@ -179,12 +185,12 @@ class _SignUpState extends State<SignUp> {
 
   Widget _entryField({
     required String title,
-    IconData? iconVisibility_off,
     IconData? iconVisibility,
-    Function? onChanged,
+    IconData? iconVisibility_off,
     required bool isObscure,
     required Color color,
     TextEditingController? controller,
+    GestureTapCallback? onPressed
   }) {
     return Container(
       // decoration: BoxDecoration(border: Border.all()),
@@ -212,26 +218,14 @@ class _SignUpState extends State<SignUp> {
               style: MyText.textStyle(),
               cursorColor: AppColor.primaryColor,
               cursorHeight: 25,
-              // obscureText: isObscure,
+              obscureText: isObscure,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
                     color: AppColor.primaryColor,
                     icon: Icon(isObscure ? iconVisibility_off : iconVisibility),
-                    onPressed: () {
-                      print('object');
-                      
-                      print(isObscure);
-                      // isObscure = !isObscure;
-                      // print(isObscure);
-                      // (context as Element).markNeedsBuild();
-                      setState(() {
-                        isObscure = !isObscure;
-                        // isObscure ? iconVisibility_off : iconVisibility;
-                      });
-                       print(isObscure);
-                    },
+                    onPressed:onPressed
                   ),
-                  contentPadding: EdgeInsets.all(8),
+                  contentPadding: const EdgeInsets.all(8),
                   errorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0),
                     borderSide: const BorderSide(
@@ -296,6 +290,7 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
           ),
+          SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

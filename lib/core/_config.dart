@@ -1,6 +1,7 @@
 
 
 const String primaryColor = "#EE1D48";
+const String textColor = "#160040";
 const String colorBlack = "#000000";
 const String colorGray = "#909090";
 const String colorOrange = "#f99928";

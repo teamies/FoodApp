@@ -1,21 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:foodapp/models/product.dart';
+
+import '../models/cart.dart';
 
 class databaseManage{
-  final  products = FirebaseFirestore.instance.collection('product') ;
-  final  carts = FirebaseFirestore.instance.collection('cart');
   final orders = FirebaseFirestore.instance.collection('order');
   
 
 
-  Stream<List<product>> getProduct() {
-    return products.snapshots().map((querySnapshot) {
-      return querySnapshot.docs.map((doc) => product.fromJson(doc)).toList();
+  Stream<List<orderCard>> getOrderCard() {
+    return orders.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) => orderCard.fromJson(doc)).toList();
     });
   }
 
-  Future updateProduct(String docID, Map<String, dynamic> data) async{
-    final document = products.doc(docID) ;
+  Future updateOrderCard(String docID, Map<String, dynamic> data) async{
+    final document = orders.doc(docID) ;
     await document.set(data);
   }
 

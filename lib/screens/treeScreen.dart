@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:foodapp/screens/ListOrder.dart';
 
-import '../models/auth_service.dart';
+import '../database/services/auth_service.dart';
 import 'LogIn.dart';
 class treeScreen extends StatefulWidget {
   const treeScreen({super.key});
@@ -17,7 +18,7 @@ class _treeScreenState extends State<treeScreen> {
       stream: Auth().authStateChanges,
       builder: (context, snapshot) {
         if(snapshot.hasData){
-          return LogIn();
+          return ListOrder();
         }else{
           return LogIn();
         }

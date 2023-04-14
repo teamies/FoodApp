@@ -7,7 +7,7 @@ import 'package:swipeable_page_route/swipeable_page_route.dart';
 import '../components/mytext.dart';
 import '../constants/constants.dart';
 import '../core/_config.dart';
-import '../models/auth_service.dart';
+import '../database/services/auth_service.dart';
 import 'SignUp.dart';
 
 class LogIn extends StatefulWidget {
@@ -33,6 +33,7 @@ class _LogInState extends State<LogIn> {
           ConfirmPassword: _controllerPassword.text);
       await Auth().signInWithEmailAndPassword(
           email: _controllerEmail.text, password: _controllerPassword.text);
+      // ignore: use_build_context_synchronously
       Navigator.pushNamedAndRemoveUntil(
           context, '/ListOrder', (route) => false);
     } on FirebaseAuthException catch (e) {
@@ -53,12 +54,13 @@ class _LogInState extends State<LogIn> {
     }
   }
 
-  Widget _entryField({
-    required String title,
-    IconData? iconVisibility_off,
-    IconData? iconVisibility,
-    required TextEditingController controller,
-  }) {
+  Widget _entryField(
+      {required String title,
+      IconData? iconVisibility_off,
+      IconData? iconVisibility,
+      required bool isObscure,
+      required TextEditingController controller,
+      GestureTapCallback? onPressed}) {
     return Container(
       // decoration: BoxDecoration(border: Border.all()),
       width: double.infinity,
@@ -79,20 +81,18 @@ class _LogInState extends State<LogIn> {
             height: 58,
             child: TextFormField(
               controller: controller,
+              textInputAction: TextInputAction.done,
               style: MyText.textStyle(),
               cursorColor: AppColor.primaryColor,
               cursorHeight: 25,
-              obscureText: _isObscure,
+              obscureText: isObscure,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
-                    color: AppColor.primaryColor,
-                    icon:
-                        Icon(_isObscure ? iconVisibility_off : iconVisibility),
-                    onPressed: () {
-                      _isObscure = !_isObscure;
-                      (context as Element).markNeedsBuild();
-                    },
-                  ),
+                      color: AppColor.primaryColor,
+                      icon: Icon(
+                          _isObscure ? iconVisibility_off : iconVisibility),
+                      onPressed: onPressed
+                      ),
                   contentPadding: EdgeInsets.all(8),
                   errorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0),
@@ -164,11 +164,6 @@ class _LogInState extends State<LogIn> {
               onPressed: () {
                 signInWithEmailAndPassword();
               },
-              child: MyText.baseText(
-                  text: 'Log in',
-                  size: 16,
-                  fontWeight: FontWeight.w600,
-                  color: colorWhite),
               style: TextButton.styleFrom(
                 backgroundColor: AppColor.primaryColor,
                 padding: EdgeInsets.only(
@@ -178,6 +173,11 @@ class _LogInState extends State<LogIn> {
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8))),
               ),
+              child: MyText.baseText(
+                  text: 'Log in',
+                  size: 16,
+                  fontWeight: FontWeight.w600,
+                  color: colorWhite),
             ),
           ),
           Padding(
@@ -234,15 +234,22 @@ class _LogInState extends State<LogIn> {
           bottom: MediaQuery.of(context).size.height * 0.05),
       child: Column(
         children: [
-          _entryField(title: 'email', controller: _controllerEmail),
+          _entryField(
+              title: 'email', isObscure: false, controller: _controllerEmail),
           SizedBox(
             height: 5,
           ),
           _entryField(
-              title: 'password',
-              iconVisibility_off: Icons.visibility_off,
-              iconVisibility: Icons.visibility,
-              controller: _controllerPassword),
+            title: 'password',
+            isObscure: _isObscure,
+            iconVisibility_off: Icons.visibility_off,
+            iconVisibility: Icons.visibility,
+            controller: _controllerPassword,
+            onPressed: () {
+              _isObscure = !_isObscure;
+              (context as Element).markNeedsBuild();
+            },
+          ),
           _errorMesage(),
           _submitButton()
         ],
